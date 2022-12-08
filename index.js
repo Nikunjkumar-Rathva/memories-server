@@ -5,6 +5,9 @@ import cors from "cors";
 
 import indexRoutes from "../server/routes/index.js";
 
+import dotenv from "dotenv";
+
+dotenv.config();
 const app = express();
 
 /**
@@ -33,25 +36,19 @@ app.use(cors());
 
 app.use("/posts", indexRoutes);
 
-const CONNECTION_URL = "mongodb://127.0.0.1:27017";
-
-/**
- * use 127.0.0.1 instead localhost
- */
-
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT;
 
 mongoose.set("strictQuery", true);
 
 mongoose
-  .connect(CONNECTION_URL)
+  .connect(process.env.CONNECTION_URL)
   .then(() => {
     app.listen(PORT, () => {
       console.log(`Server started on port ${PORT}`);
     });
   })
   .catch((error) => {
-    console.log(error.message);
+    console.log(error);
   });
 
 /**
