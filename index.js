@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 
 import indexRoutes from "../server/routes/index.js";
+import userRoutes from "../server/routes/users.js";
 
 import dotenv from "dotenv";
 
@@ -35,6 +36,7 @@ app.use(
 app.use(cors());
 
 app.use("/posts", indexRoutes);
+app.use("/user", userRoutes);
 
 const PORT = process.env.PORT;
 
