@@ -15,7 +15,7 @@ export const getPosts = async (req, res) => {
       data: postMessages,
     });
   } catch (error) {
-    res.status(404).json({ success: false, message: error.message });
+    res.status(404).json({ success: false, message: error.message, data: [] });
   }
 };
 
@@ -41,6 +41,7 @@ export const createPost = async (req, res) => {
     res.status(409).json({
       success: false,
       message: error.message,
+      data: null,
     });
   }
 };
