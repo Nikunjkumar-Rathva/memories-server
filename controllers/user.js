@@ -70,15 +70,17 @@ export const signUpUser = async (req, res) => {
     });
 
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "User Already Exist With This Email Address !" });
+      return res.status(400).json({
+        success: false,
+        message: "User Already Exist With This Email Address !",
+      });
     }
 
     if (password !== confirmPassword) {
-      return res
-        .status(400)
-        .json({ message: "Password Doesn't Match With Confirm Password !" });
+      return res.status(400).json({
+        success: false,
+        message: "Password Doesn't Match With Confirm Password !",
+      });
     }
 
     const hashPassword = await bcrypt.hash(password, 12);
@@ -112,6 +114,76 @@ export const signUpUser = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Something went wrong on server",
+    });
+  }
+};
+
+export const changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+
+    // if (!existingUser) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "User Not Found",
+    //   });
+    // }
+
+    if (!mongoose.Types.ObjectId.isValid(req.userId)) {
+      return res.status(404).json({
+        success: false,
+        message: "Id Not Found !",
+        data: [],
+      });
+    }
+
+    // const existingUser = User.findById(req.userId);
+    const existingUser = await User.findOne({ _id: req.userId });
+
+    const isPasswordCorrect = await bcrypt.compare(
+      oldPassword,
+      existingUser.password
+    );
+
+    if (!isPasswordCorrect) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Old Password",
+        data: [],
+      });
+    }
+
+    if (oldPassword === newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New Password Is Same As Old Password.",
+        data: [],
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New Password Does Not Match With Confirm Password",
+        data: [],
+      });
+    }
+
+    const hashPassword = await bcrypt.hash(newPassword, 12);
+
+    await User.findByIdAndUpdate(req.userId, { password: hashPassword });
+
+    console.log(req.userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Password Updated Succesfully :)",
+      data: [],
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };

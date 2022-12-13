@@ -1,5 +1,6 @@
 import express from "express";
-import { signInUser, signUpUser } from "../controllers/user.js";
+import { changePassword, signInUser, signUpUser } from "../controllers/user.js";
+import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -10,5 +11,6 @@ const router = express.Router();
 
 router.post("/signIn", signInUser);
 router.post("/signUp", signUpUser);
+router.post("/changePassword", auth, changePassword);
 
 export default router;

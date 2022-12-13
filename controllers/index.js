@@ -86,6 +86,7 @@ export const updatePost = async (req, res) => {
   res.status(200).json({
     success: true,
     data: updatePost,
+    message: "Memory Updated Successfully :)",
   });
 };
 
